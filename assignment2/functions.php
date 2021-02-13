@@ -1,136 +1,128 @@
 <?php 
- //never used
-// include ("auxillary/default.css");
-
-// $concatenation = '<!DOCTYPE html><html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">'.$title.'<link rel="stylesheet" href="auxillary/default.css"></head>';
-
-// function printTitle(){
-//     echo "$title";
-// }
-/*
-
-*/ 
 
 
+function accountDetails(){
+    $stAddress = "123 aStPlace";
+    $username = "UserPrimeUlimateMAXIMUMER!";
+    $password ="PASSWERDD";
+    $stAddressTwo ="";
+    $city = "crazyTown";
+    $state ="funStatE";
+    $zipCode= "55689";
+
+    if(isset($_POST["stAddress"])){
+        $stAddress = $_POST["stAddress"];
+    }
+    if(isset($_POST["username"])){
+        $username = $_POST["username"];
+    }
+    if(isset($_POST["password"])){
+        $password = $_POST["password"];
+    }
+    if(isset($_POST["city"])){
+        $city = $_POST["city"];
+    }
+    if(isset($_POST["state"])){
+        $state = $_POST["state"];
+    }
+    if(isset($_POST["stAddressTwo"])){
+        $stAddressTwo = $_POST["stAddressTwo"];
+    }
+    if(isset($_POST["zipCode"])){
+        $zipCode = $_POST["zipCode"];
+    }
+
+   return
+    <<<__html__
+    <form method ="POST" action="?pg=account">
+        <feildset>    
+            <legend>My account</legend><br>
+                <label>User Name</label>
+                <input type="text" name="username" value="{$username}" />
+                <label>Password</label>
+                <input type="password" name="password" value="{$password}"/><br><br>
+                <label>Address</label>
+                <input type="text" name="stAddress" value="{$stAddress}"/> 
+                <input type="text" name="stAddressTwo" value="{$stAddressTwo}"/> <br>
+                <label>City</label>
+                <input type="text" name="city" value="{$city}"/><br>
+                <label>State</label>
+                <input type="text" name="state" value="{$state}"/><br>
+                <label>Zip Code</label>
+                <input type="text" name="zipCode" value="{$zipCode}" />
+                <br><br>
+                <input type="submit" value="Save Changes"/><br><br>
+        </fieldset>
+    </form>
+    __html__;
+}
 
 function printTitle(){
     $title = "Lebrun - Self-portrait in a Straw Hat";
     return $title;
-    // echo '<!DOCTYPE html>
-    // <html lang="en">
-    
-    // <head>
-    //     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">';
-    //     $value;
-    //     '<link rel="stylesheet" href="auxillary/default.css">
-    // </head>';
-
 }
-
-// function printHeader(){
-//     echo '<!DOCTYPE html>
-//     <html lang="en">
-    
-//     <head>
-//         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-//         <title>Lebrun - Self-portrait in a Straw Hat</title>
-//         <link rel="stylesheet" href="auxillary/default.css">
-//     </head>';
-
-// }
-
-function printBody(){
-    
-    // $productDetails = array(
-    //     array(
-    //         "facet" => "Date", 
-    //         "links" => array(
-    //             array(
-    //                 "text" => "1782"
-    //             )
-    //         )
-    //     ),
-    //     array(
-    //         "facet" => "Medium", 
-    //         "links" => array(
-    //             array(
-    //                 "text" => "Oil on canvas",
-    //             )
-    //         )
-    //     ),
-    //     array(
-    //         "facet" => "Dimension", 
-    //         "links" => array(
-    //             array(
-    //                 "text" => "98cm x 71cm"
-    //             )
-    //         )
-    //     ),
-    //     array(
-    //         "facet" => "Home", 
-    //         "links" => array(
-    //             array(
-    //                 "text" => "National Gallery, London",
-    //             )
-    //         )
-    //     ),
-    //     array(
-    //         "facet" => "Genres", 
-    //         "links" => array(
-    //             array(
-    //                 "text" => "Realism",
-    //                 "href" => "#"
-    //             ),
-    //             array(
-    //                 "text" => "Rococo",
-    //                 "href" => "#"
-    //             ),            
-    //         )            
-    //     ),
-    //     array(
-    //         "facet" => "Subjects", 
-    //         "links" => array(
-    //             array(
-    //                 "text" => "People",
-    //                 "href" => "#"
-    //             ),
-    //             array(
-    //                 "text" => "Arts",
-    //                 "href" => "#"
-    //             )
-    //         )
-    //     ),
-    // );    
-    
-    // $productDetailsHtml = "";
-    // foreach($productDetails as $product) {        
-    //     $productDetailsHtml .= '<tr><td class="facet">'. $product["facet"] . ':</td><td class="value">';
-    //         $links = array();
-    //         foreach($product["links"] as $link) {
-    //             if(isset($link["href"])) {
-    //                 $text = '<a href="' . $link["href"] . '">' . $link['text'] . '</a>';
-    //             } else {
-    //                 $text = $link["text"];
-    //             }
-    //             array_push($links, $text);
-    //         }
-    //         $productDetailsHtml .= join(", ", $links);
-    //         $productDetailsHtml .= '</td></tr>';
-    // }
-
-    $firstNavigation=array("my account", "wish list", "shopping cart");
+function htmlHeader(){
+    $firstNavigation=array(
+        array(
+            "title" => "my account",
+            "href" => "?pg=account",
+        ),
+        array("title" => "wish list",
+              "href" => "#"
+        ),
+        array("title" => "shopping cart",
+              "href" => "#",
+        ),
+    );
     $navstr = "<ul>";
     foreach($firstNavigation as $values){
-        $navstr.="<li> <a href=\"#\">".$values."</a>  </li>";
+        $navstr.="<li> <a href=\"{$values["href"]}\">" . $values["title"] . "</a>  </li>";
     }
     $navstr.="</ul>"; 
 
-    $secondNavigation = ["Home", "About us", "Art Works", "Artists"];
+    $secondNavigation = array(
+        array(
+            "title" =>"Home",
+            "href" => "#",
+            ),
+        array(
+            "title" =>"About us",
+            "href" => "#"
+            ),
+        array(
+            "title" => "Art Works",
+            "href" => "#"
+            ),
+        array(
+            "title" =>"Artists",
+            "href" => "#"
+            )
+        );
+
     $navstrTwo = "<ul>";
     foreach($secondNavigation as $values){
-        $navstrTwo.="<li> <a href=\"#\"> $values </a> </li>";
+        $navstrTwo.="<li> <a href=\"{$values["href"]}\"> {$values["title"]} </a> </li>";
     }
     $navstrTwo.="</ul>";
+    
+    return
+    <<<__html__
+    <header>
+    <nav class="user">$navstr</nav>
+    <h1>Art Store</h1>
+    <nav>$navstrTwo</nav>
+    </header>
+__html__;
+}
+function footer(){
+    return
+    <<<__html__
+    <footer>
+        <p>All images are copyright to their owners. This is just a hypothetical site ©2020 Copyright Art Store</p>
+    </footer>
+__html__;
+}
+function printBody(){
 
     $tableRowOne = array("Date", "Medium", "Dimension", "Home", "Genres", "Subjects");
     
@@ -151,9 +143,7 @@ function printBody(){
             "title" => "Milkmaid",
             "id" => 849),
     );
-    // $artWorkTitle= array("Still Life with Flowers in a Glass Vase","Portrait of Alida Christina Assink","Self-portrait","William II, Prince of Orange, and his Bride, Mary Stuart","Milkmaid");
-    // $imageLocation= ("artwork/small/293.jpg\"", "artwork/small/183.jpg\"","artwork/small/820.jpg\"","artwork/small/374.jpg\"","artwork/small/849.jpg\"");
-    // $imageHref=("#293","#183","#820", "#374","#849");
+
      $actions = "<div class=\"actions\"><a href=\"#\">View</a><a href=\"#\">Wish</a><a href=\"#\">Cart</a></div>";
     
      $relatedArtHtml = "";
@@ -170,17 +160,9 @@ function printBody(){
          __html__;
      }
 
-
-    
-    
-    
     return 
     <<<__html__
-    <header>
-        <nav class="user">$navstr</nav>
-        <h1>Art Store</h1>
-        <nav>$navstrTwo</nav>
-    </header>
+
     <main>
         <article class="artwork">
             <h2 class="art_title">Self-portrait in a Straw Hat</h2>
@@ -229,9 +211,6 @@ function printBody(){
         $relatedArtHtml
         </article>
     </main>
-    <footer>
-        <p>All images are copyright to their owners. This is just a hypothetical site ©2020 Copyright Art Store</p>
-    </footer>
 </html>
 __html__;
 }
