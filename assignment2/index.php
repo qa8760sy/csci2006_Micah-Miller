@@ -11,6 +11,24 @@ switch($_GET["pg"]){
         $header = "Account Page";
         $body = accountDetails();
         break;
+    case "artist":
+        $artist = new artist(null);
+        $body = $artist->toHTML();
+        // set header to artist name. $header = $artist->getName();
+        break; 
+    case "aboutUs":
+        $header = "Account Page";
+        $body = aboutUs();
+        break;
+    case "home":
+        $header = "Account Page";
+        $body = home();
+        break;            
+    case "artWorks":
+        $artwork = new artwork(null);
+        $body = $artwork->toHTML();
+        // set header to artwork name. $header = $artist->getName();
+        break; 
     default:
         $header = printTitle();
         $body = printBody();

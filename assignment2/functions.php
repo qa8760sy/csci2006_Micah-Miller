@@ -83,19 +83,19 @@ function htmlHeader(){
     $secondNavigation = array(
         array(
             "title" =>"Home",
-            "href" => "#",
+            "href" => "?pg=home",
             ),
         array(
             "title" =>"About us",
-            "href" => "#"
+            "href" => "?pg=aboutUs"
             ),
         array(
             "title" => "Art Works",
-            "href" => "#"
+            "href" => "?pg=artWorks"
             ),
         array(
             "title" =>"Artists",
-            "href" => "#"
+            "href" => "?pg=artists"
             )
         );
 
