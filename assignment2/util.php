@@ -83,19 +83,19 @@ function htmlHeader(){
     $secondNavigation = array(
         array(
             "title" =>"Home",
-            "href" => "#",
+            "href" => "?pg=home",
             ),
         array(
             "title" =>"About us",
-            "href" => "#"
+            "href" => "?pg=aboutUs"
             ),
         array(
             "title" => "Art Works",
-            "href" => "#"
+            "href" => "?pg=artWorks"
             ),
         array(
             "title" =>"Artists",
-            "href" => "#"
+            "href" => "?pg=artists"
             )
         );
 
@@ -201,7 +201,6 @@ function printBody(){
                                 <td class="value"><a href="#">People</a>, <a href="#">Arts</a></td>
                             </tr>
                         </tbody>
-
                     </table>
                 </figcaption>
             </figure>
@@ -214,4 +213,44 @@ function printBody(){
 </html>
 __html__;
 }
+
+function connectToDb(){
+    global $connectionString, $dbUserName, $dbPassword;
+   try{
+    $pdo = new PDO($connectionString, $dbUserName, $dbPassword);
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    return $pdo;
+} 
+catch (PDOException $e){
+    die( $e->getMessage() );
+}
+}
+
+function aboutus(){
+    $html ="";
+    return $html;
+}
+
+function home(){
+    $html ="";
+    return $html;
+}
+
+function artistss(){
+   $arrayValues = artist::getAllArtists();
+   $html = "<ul>";
+   foreach($arrayValues as $id=>$values){
+    $html .= "<li><a href=\"?pg=artist&artist=$id\">$values</a></li>";
+   }return 
+   $html . "</ul>";
+}
+function artWorkss(){
+    $arrayValues = artist::getAllArtists();
+    $html = "<ul>";
+    foreach($arrayValues as $id=>$values){
+     $html .= "<li><a href=\"?pg=artist&artist=$id\">$values</a></li>";
+    }return 
+    $html . "</ul>";
+    
+ }
 ?>
