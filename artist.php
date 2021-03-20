@@ -1,103 +1,73 @@
 <?php 
 require_once "DBMod.php";
-class artist extends DBMod{
-    // game, points, Host, hostFaction, player, playerFaction, map, lengthOfGame
-            private $game;
-            private $points;
-            private $host;
-            private $hostFaciton;
-            private $player;
-            private $playerFaction;
-            private $map;
-            private $lengthOfGame;
-            
+class artist extends DBMod{    
+            private $artistID; 
+            private $firstName;
+            private $lastName;
+            private $influence;
+            private $dateOfDeath;
+            private $description;
+            private $DateOfBirth;
+            private $origin
+
             public $changedFlag = array( 
-                'game' => false,
-                'points' => false,
-                'host' => false,
-                'hostFaction' => false,
-                'player' => false,
-                'playerFaction' => false,
-                'map' => false,
-                'lengthOfGame' => false,
+                'artistID' => false;
+                'firstName' => false,
+                'lastName' => false,
+                'influence' => false,
+                'dateOfDeath' => false,
+                'description' => false,
+                'DateOfBirth' => false,
+                'origin' => false,
                 );
     // full name, last name, char for influence, description, date of death, char for origin, Date of birth
         function __construct($intVariable = null){
             parent::__construct($intVariable);
             $constructorVariable  = $this->getData($intVariable);
-            $this->game = $constructorVariable['game'];
-            $this->points = $constructorVariable['points'];
-            $this->host = $constructorVariable['host'];
-            $this->hostFaction = $constructorVariable['hostFaction'];
-            $this->player = $constructorVariable['player'];
-            $this->playerFaction = $constructorVariable['playerFaction'];
-            $this->map = $constructorVariable['map'];
-            $this->lengthOfGame = $constructorVariable['lengthOfGame'];
+            $this->firstName = $constructorVariable['firstName'];
+            $this->lastName = $constructorVariable['lastName'];
+            $this->influence = $constructorVariable['influence'];
+            $this->dateOfDeath = $constructorVariable['dateOfDeath'];
+            $this->description = $constructorVariable['description'];
+            $this->DateOfBirth = $constructorVariable['DateOfBirth'];
+            $this->origin = $$constructorVariable['origin'];
         }
         
-        protected function insertSQL(){
-
+        protected function insertSQL($valueOne,$valueTwo,$valueThree,$valueFour,$valueFive,$valueSix, $valueSeven,$valueEight){
+            $sql = "INSERT INTO Artist (artist_id, artist_fullName, artist_lastName , artist_born , artist_died , artist_origin , artist_influence , artist_desc )
+            VALUES ('$valueOne','$valueTwo','$valueThree','$valueFour','$valueFive','$valueSix','$valueSeven','$valueEight')";
+            return $sql;
         }
-        protected function updateSQL(){
-
+        protected function updateSQL($id, $valueOne,$valueTwo,$valueThree,$valueFour,$valueFive,$valueSix, $valueSeven,$valueEight){ //There must be a better to update things. IF you only want to update one field needing to type in the other stuff feels like poor programming?
+            $sql = "INSERT INTO Artist (artist_id, artist_fullName, artist_lastName , artist_born , artist_died , artist_origin , artist_influence , artist_desc )
+            VALUES ('$valueOne','$valueTwo','$valueThree','$valueFour','$valueFive','$valueSix','$valueSeven','$valueEight')
+            WHERE artist_id=$id";
+            return $sql;
         }
-        protected function deleteSQL(){
+        protected function deleteSQL($value){
+            $sql = "DELETE FROM artist WHERE artist_id=$value";
+            return $sql;
+        }
 
+        static function getAllArtist(){
+            $sql = "SELECT *
+            FROM artist";
+            $results = $pdo ->query($sql);
+            $arrayValues=array();
+            while($row = $results->fetch()){
+              $arrayValues[$row["artist_id"]] =$row["artist_fullName"];
+            }
+            return $arrayValues;
         }
 
         public function getData($id){        
-            switch ($id){
-                case 1:
-                return
-                    ['game' => 'game: star wars miniatures',
-                    'points' => 'points: 400',
-                    'host' => 'host: myself',
-                    'hostFaction' => 'Host Faction: imperial',
-                    'player' => 'Player: cory',
-                    'playerFaction' => 'Player Faction: rebs',
-                    'map' => 'Map: bunker',
-                    'lengthOfGame' => 'Number of Turns: 8',
-                     ];
-                break;
-    
-                case 2:
-                return
-                    ['game' => 'game: star wars miniatures',
-                    'points' => 'points: 200',
-                    'host' => 'host: me',
-                    'hostFaction' => 'Host Faction: vong',
-                    'player' => 'Player: cory',
-                    'playerFaction' => 'Player Faction: new republic',
-                    'map' => 'Map: endor',
-                    'lengthOfGame' => 'Number of Turns: 7',
-                    ];
-                break;
-    
-                case 3:
-                return
-                    ['game' => 'game: Kill team',
-                    'spoint' => 'points: 200',
-                    'host' => 'host: meAgain',
-                    'hostFaction' => 'Host Faction: eldar',
-                    'player' => 'Player: justin',
-                    'playerFaction' => 'Player Faction: nurgle',
-                    'map' => 'Map: containers',
-                    'lengthOfGame' => 'Number of Turns: 3',
-                    ];
-                break;
-    
-                default:
-                return
-                    ['game' => 'game: unkown',
-                     'points' => 'points: 00',
-                     'host' => 'host: unknown',
-                     'hostFaction' => 'Host Faction: unknown',
-                     'player' => 'Player: unknown',
-                     'playerFaction' => 'Player Faction: unknown',
-                     'map' => 'Map: unknown',
-                     'lengthOfGame' => 'Number of Turns: 00',
-                   ];
-                break;
+            $sql = "SELECT *
+            FROM artist
+            where artist_id = $id";
+            
+            $results = $pdo ->query($sql);
+            while($row = $results->fetch()){
+               return $row;
             }
         }
         public function modifiedInformaiton(){
@@ -108,8 +78,8 @@ class artist extends DBMod{
             }
             return false;
         }
-        public function toHTML(){ //pg. 1118
-            $theValues = array($this->getGame(),$this->getPoints(),$this->getHost(),$this->getHostFaction(),$this->getPlayer(),$this->getPlayerFaction(),$this->getMap(),$this->getLengthOfGame(), );
+        public function toHTML(){ //pg. 1118    sanders-assignment4-40:59
+            $theValues = array($this->getartistID(),$this->getFirstName(),$this->getLastName(),$this->getInfluence(),$this->getDateOfDeath(),$this->getDescription(),$this->getDateOfBirth(),$this->getOrigin() );
             $printOut = "<ul>";
             foreach($theValues as $value){
                 $printOut .= "<li>". $value . "</li>";
@@ -118,64 +88,61 @@ class artist extends DBMod{
             
             return $printOut;
         }
-        public function setGame($game){
-            $this->game = $game;
-            $this->changedFlag['game'] = true;
-    
+        public function setFirstName($artistID){
+            $this->artistID = $artistID;
+            $this->changedFlag['artistID'] = true;
         }
-        public function setPoints($points){
-            $this->points = $points;
-            $this->changedFlag['points'] = true;
+        public function setFirstName($firstName){
+            $this->firstName = $firstName;
+            $this->changedFlag['firstName'] = true;
         }
-        public function setHost($host){
-            $this->host = $host;
-            $this->changedFlag['host'] = true;
+        public function setLastName($lastName){
+            $this->lastName = $lastName;
+            $this->changedFlag['lastName'] = true;
         }
-        public function setHostFaction($hostFaciton){
-            $this->hostFaction = $hostFaction;
-            $this->changedFlag['hostFaction'] = true;
+        public function setOrigin($origin){
+            $this->origin = $origin;
+            $this->changedFlag['origin'] = true;
         }
-        public function setPlayer($player){
-            $this->player = $player;
-            $this->changedFlag['player'] = true;
+        public function setInfluence($influence){
+            $this->influence = $influence;
+            $this->changedFlag['influence'] = true;
         }
-        public function setPlayerFaction($playerFaction){
-            $this->playerFaction = $playerFaction;
-            $this->changedFlag['playerFaction'] = true;
+        public function setDateOfDeath($dateOfDeath){
+            $this->dateOfDeath = $dateOfDeath;
+            $this->changedFlag['dateOfDeath'] = true;
         }
-        public function setMap($map){
-            $this->map = $map;
-            $this->changedFlag['map'] = true;
+        public function setDescription($description){
+            $this->description = $description;
+            $this->changedFlag['description'] = true;
         }
-        public function setLengthOfGame($lengthOfGame){
-            $this->lengthOfGame = $lengthOfGame;
-            $this->changedFlag['lengthOfGame'] = true;
+        public function setDateOfBirth($DateOfBirth){
+            $this->DateOfBirth = $DateOfBirth;
+            $this->changedFlag['DateOfBirth'] = true;
         }
-        public function getGame(){
-            return $this->game;
+        public function getartistID(){
+            return $this->artistID;
         }
-        public function getPoints(){
-            return $this->points;
+        public function getFirstName(){
+            return $this->firstName;
         }
-        public function getHost(){
-            return $this->host;
+        public function getLastName(){
+            return $this->lastName;
         }
-        public function getHostFaction(){
-            return $this->hostFaction;
+        public function getOrigin(){
+            return $this->Origin;
         }
-        public function getPlayer(){
-            return $this->player;
+        public function getInfluence(){
+            return $this->influence;
         }
-        public function getPlayerFaction(){
-            return $this->playerFaction;
+        public function getDateOfDeath(){
+            return $this->dateOfDeath;
         }
-        public function getMap(){
-            return $this->map;
+        public function getDescription(){
+            return $this->description;
         }
-        public function getLengthOfGame(){
-            return $this->lengthOfGame;
+        public function getDateOfBirth(){
+            return $this->DateOfBirth;
         }
-    
-    
     }
-    ?>
+?>

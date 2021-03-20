@@ -1,5 +1,5 @@
 <?php
-require("functions.php");
+require("util.php");
 // require("auxillary/default.css");
 
 $header = "";
@@ -12,10 +12,14 @@ switch($_GET["pg"]){
         $body = accountDetails();
         break;
     case "artist":
-        $artist = new artist(null);
+        if(isset($_GET["artist"])){
+        $artist = new artist($_GET["artist"]);
         $body = $artist->toHTML();
-        // set header to artist name. $header = $artist->getName();
-        break; 
+        }else{
+        $header = "artists";
+        $body = artistss();
+        }
+        break;   
     case "aboutUs":
         $header = "Account Page";
         $body = aboutUs();
@@ -25,10 +29,14 @@ switch($_GET["pg"]){
         $body = home();
         break;            
     case "artWorks":
-        $artwork = new artwork(null);
-        $body = $artwork->toHTML();
-        // set header to artwork name. $header = $artist->getName();
-        break; 
+        if(isset($_GET["artwork"])){
+            $artwork = new artwork($_GET["artwork"]);
+            $body = $artwork->toHTML();
+        }else{
+            $header = "artworks";
+            $body = artWorkss();
+        }
+        break;
     default:
         $header = printTitle();
         $body = printBody();
