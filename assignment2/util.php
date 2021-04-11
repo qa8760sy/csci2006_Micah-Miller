@@ -1,5 +1,7 @@
 <?php 
-
+// think i need to include my classes?
+include_once("artist.php");
+include_once("artwork.php");
 
 function accountDetails(){
     $stAddress = "123 aStPlace";
@@ -58,27 +60,57 @@ function accountDetails(){
 }
 
 function printTitle(){
-    $title = "Lebrun - Self-portrait in a Straw Hat";
+    $title = "Lebrun - Self-portrait in a Straw Hat"; //will need to change this to by dynamic i think.
     return $title;
 }
-function htmlHeader(){
-    $firstNavigation=array(
+
+function navBars(){
+    if(isLoggedIn()){
+        $firstNavigation=array(
         array(
             "title" => "my account",
             "href" => "?pg=account",
         ),
         array("title" => "wish list",
-              "href" => "#"
+              "href" => "?pg=wishlist"
         ),
         array("title" => "shopping cart",
-              "href" => "#",
+              "href" => "?pg=shoppingcart",
         ),
+        array("title" => "Logout",
+              "href" => "?logout"),
     );
     $navstr = "<ul>";
     foreach($firstNavigation as $values){
         $navstr.="<li> <a href=\"{$values["href"]}\">" . $values["title"] . "</a>  </li>";
     }
     $navstr.="</ul>"; 
+    return $navstr;
+    }else{
+        $firstNavigation = array(array(
+            "title" => "Sign-in",
+            "href" => "?pg=Sign-in",
+        ),
+        array("title" => "Sign-up",
+              "href" => "?pg=Sign-up"
+        ),
+        array("title" => "shopping cart",
+              "href" => "?pg=shoppingcart",
+        ),
+    );
+        $navstr = "<ul>";
+    foreach($firstNavigation as $values){
+        $navstr.="<li> <a href=\"{$values["href"]}\">" . $values["title"] . "</a>  </li>";
+    }
+    $navstr.="</ul>"; 
+    return $navstr;
+    }
+    
+}
+
+function htmlHeader(){
+
+    $navstr = navBars();
 
     $secondNavigation = array(
         array(
@@ -95,7 +127,7 @@ function htmlHeader(){
             ),
         array(
             "title" =>"Artists",
-            "href" => "?pg=artists"
+            "href" => "?pg=artist"
             )
         );
 
@@ -114,6 +146,7 @@ function htmlHeader(){
     </header>
 __html__;
 }
+
 function footer(){
     return
     <<<__html__
@@ -122,6 +155,7 @@ function footer(){
     </footer>
 __html__;
 }
+
 function printBody(){
 
     $tableRowOne = array("Date", "Medium", "Dimension", "Home", "Genres", "Subjects");
@@ -208,49 +242,264 @@ function printBody(){
         <h2>Similar Artwork</h2>
         <article class="related">
         $relatedArtHtml
-        </article>
-    </main>
-</html>
+        </article></main></html>
 __html__;
 }
 
+$pdo = null;
+
 function connectToDb(){
-    global $connectionString, $dbUserName, $dbPassword;
+    global $pdo;
+    if($pdo!==null){
+        return $pdo;
+    }
+    include ("config.php");
+    // var_dump($connectionString);
    try{
     $pdo = new PDO($connectionString, $dbUserName, $dbPassword);
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     return $pdo;
-} 
-catch (PDOException $e){
-    die( $e->getMessage() );
-}
+    } 
+    catch (PDOException $e){
+        die( $e->getMessage() );
+    }
 }
 
+function isValidUser($username, $password){
+    $pdo = connectToDb();
+    $sql = "SELECT customer_id FROM Customer WHERE customer_username=:username AND customer_passhash=:password";
+    $stmt = $pdo->prepare($sql);  
+    $hashedPassword = md5($username.'SECRET'.$password);
+    $stmt->execute(array(":username" => $username, ":password" => $hashedPassword));   //binds the values as well as executes them    
+    if($stmt->rowCount() == 0) {
+        return false;
+    }
+    $userData = $stmt->fetch();
+    return $userData['customer_id'];
+}
+
+function userNameInUse($username){
+    $pdo = connectToDb();
+    $sql = "SELECT customer_id FROM Customer WHERE customer_username=:username";
+    $stmt = $pdo->prepare($sql);    
+    $stmt->execute(array(":username" => $username));    
+
+    return $stmt->rowCount() > 0;
+}
+
+function prepareSIGNUP(){
+    $pdo = connectToDb();
+    if(!userNameInUse($username)){
+        $signupusername = $_POST['signupUSERNAME'];
+        $password = $_POST['signupPASSWORD'];
+        $hashedPassword = md5($signupUSERNAME.'SECRET'.$password); 
+        $fullName = $_POST['signupFULLNAME'];
+        $address= $_POST['signupADDRESS'];
+        $sql = "INSERT INTO Customer (customer_username, customer_passhash, customer_fullName, customer_addr)
+        VALUES ($signupusername, $hashedPassword, $fullName, $address)";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute();        
+        $_SESSION['currentUser'] = $_POST['signupUSERNAME'];
+        // isValidUser($signupusername, $password);
+    }else{
+        echo "user name already in use";
+    }
+}
+
+function signIN(){
+    $html =<<<__html__
+    <fieldset><legend>Sign in</legend>
+    <form action="index.php" method="POST">
+    <label>User Name</labeL>
+    <input type="text" name="username" value="testUser"><br>
+    <label>Password</labeL>
+    <input type="text" name="password" value="testPassword"><br>
+    <input type="submit">
+    </form></fieldset>
+__html__;
+    return $html;
+}
+
+function signUP(){
+    $html =<<<__html__
+    <fieldset><legend>Sign up</legend>
+    <form action="index.php" method="POST">
+    <label>User Name</labeL>
+    <input type="text" name="signupUSERNAME" value=""><br>
+    <label>Password</labeL>
+    <input type="text" name="signupPASSWORD" value=""><br>
+    <label>Full Name</labeL>
+    <input type="text" name="signupFULLNAME" value=""><br>
+    <label>Address</labeL>
+    <input type="text" name="signupADDRESS" value=""><br>
+    <input type="submit">
+    </form></fieldset>
+__html__;
+    return $html;
+}
+
+function isLoggedIn() {
+    return isset($_SESSION['currentUser']);
+}
+
+function getCurrentUser() {
+    return $_SESSION['currentUser'];
+}
 function aboutus(){
-    $html ="";
+    $html ="This is an about us page. This art store is entirely fictional, and used for the sole purpose of \"classwork\".";
     return $html;
 }
 
 function home(){
-    $html ="";
+    $html ="*insert real content* Home Page, this is more just for testing purposes. That when the button is clicked something different will appear ont he screen";
     return $html;
 }
 
 function artistss(){
-   $arrayValues = artist::getAllArtists();
-   $html = "<ul>";
-   foreach($arrayValues as $id=>$values){
-    $html .= "<li><a href=\"?pg=artist&artist=$id\">$values</a></li>";
-   }return 
-   $html . "</ul>";
-}
-function artWorkss(){
-    $arrayValues = artist::getAllArtists();
+    $arrayValues = artist::getAllArtist(); //found and extra s at the end here
     $html = "<ul>";
     foreach($arrayValues as $id=>$values){
      $html .= "<li><a href=\"?pg=artist&artist=$id\">$values</a></li>";
     }return 
     $html . "</ul>";
-    
  }
+
+function artWorkss(){
+    $arrayValues = artwork::getAllartwork();
+    $html = "<ul>";
+    foreach($arrayValues as $id=>$values){
+     $html .= "<li><a href=\"?pg=artWorks&artwork=$id\">$values</a></li>";
+    }return 
+    $html . "</ul>";
+ }
+
+
+function buildWishlist(){
+    $html = "<h2>Your wishList</h2>";
+    $html .= '<table>';
+    $results = getWishlist();
+    foreach ($results as $key => $value) {
+        $html .=  '<tr><td>'.htmlentities(utf8_encode($value['artwork_name'])).'</td>'. '<td></td><td>' . addWishListButtons($value['artwork_id']) .' </td></tr>';
+    }
+    $html .= '</table>';
+    var_dump($results);
+    return $html;
+}
+
+function addtoWishlist($id){
+    $pdo = connectToDb();
+    $user = getCurrentUser();
+    $sql ="INSERT INTO WishlistItem (wl_customer, wl_artwork)
+    VALUES ($user, $id) ON DUPLICATE KEY UPDATE wl_customer=wl_customer";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute();  
+}
+
+function getWishlist(){
+    $pdo = connectToDb();
+    $user = getCurrentUser();
+    $sql = "select artwork.artwork_id, artwork.artwork_name FROM wishlistitem LEFT JOIN
+     artwork ON wishlistitem.wl_artwork = artwork.artwork_id LEFT JOIN Customer on 
+     wishlistitem.wl_customer = customer.customer_id WHERE wl_customer = $user";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute();
+    $results = $stmt->fetchAll();
+    return $results;
+}
+
+function removeFromWishlist($artWorkId){
+    $pdo = connectToDb();
+    $user = getCurrentUser();
+    $sql ="DELETE FROM WishlistItem
+    WHERE wl_customer=$user
+    AND wl_artwork=$artWorkId";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute(); 
+}
+
+function moveFromWishToCart($id){
+    addToCart($id);
+    removeFromWishlist($id);
+}
+
+function addWishListButtons($id){
+    return '<form action="?pg=wishlist&" method="post">
+    <input type="hidden" name="artworkId" value="'. $id. '" />
+    <button type="submit" name="wish" value="removeWishlist">Remove</button>
+    <button type="submit" name="wish" value="addToCart">Add to Cart</button></form>';
+}
+
+function addButtons($id, $quantity){
+    return '<form action="?pg=shoppingcart&" method="post"><input type="text" name="quantity" value="'. $quantity. '" />
+    <input type="hidden" name="artworkId" value="'. $id. '" />
+    <button type="submit" name="action" value="update">Update Quantity</button>
+    <button type="submit" name="action" value="remove">Remove</button></form>';
+}
+
+function buildCart(){    
+    $html = '<h2>Your cart</h2>';
+    $html .= '<table>';
+    $results = getCart();
+    foreach ($results as $key => $value) {
+        $html .=  '<tr><td>'.htmlentities(utf8_encode($value['artwork_name'])).'</td><td>' . addButtons($value['artwork_id'], $value['oi_quantity']) .' </td></tr>';
+    }
+    $html .= '</table><br><form><button type="submit" name="action" value="order">Place Order</button> </form>';
+
+    return $html;
+}
+
+function placeOrder(){
+    $pdo = connectToDb();
+    $user = getCurrentUser();
+    $sql ="UPDATE OrderItem
+    SET oi_orderNum=?, oi_shippingAddr=?
+    WHERE oi_orderNum = -1
+    AND oi_customer=$user
+    AND oi_artwork=?";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute(); 
+}
+
+function updateCart($update, $artworkId){
+    $pdo = connectToDb();
+    $user = getCurrentUser();
+    $sql ="UPDATE OrderItem
+    SET oi_quantity=$update
+    WHERE oi_orderNum = -1
+    AND oi_customer=$user
+    AND oi_artwork=$artworkId";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute(); 
+}
+
+function removeFromCart($artworkId){
+    $pdo = connectToDb();
+    $user = getCurrentUser();
+    $sql ="DELETE FROM OrderItem
+    WHERE oi_orderNum = -1
+    AND oi_customer=$user
+    AND oi_artwork=$artworkId";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute();    
+}
+
+function addtoCart($id){
+    $pdo = connectToDb();
+    $user = getCurrentUser();
+    $sql ="INSERT INTO OrderItem (oi_orderNum, oi_customer, oi_artwork, oi_quantity, oi_shippingAddr)
+    VALUES (-1, $user, $id, 1, '') ON DUPLICATE KEY UPDATE oi_quantity=oi_quantity+1";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute();    
+}
+
+function getCart(){    
+    $pdo = connectToDb();
+    $user = getCurrentUser();
+    $sql = "select orderitem.oi_quantity, artwork.* FROM OrderItem LEFT JOIN artwork ON orderitem.oi_artwork = artwork.artwork_id WHERE oi_customer = $user";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute();
+    $results = $stmt->fetchAll();
+    return $results;
+}
+
 ?>
