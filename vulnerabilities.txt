@@ -1,0 +1,12 @@
+The scafolding to validate input via phptaken from a previous lab assignment is in place I've only failed to implement
+it at this time. It would require a larger amount of re-writting than i was ready for and bit of a bit more than i 
+could chew with the time remaining. The only thing currently in place is the simple html "required" attribute to keep 
+fields from being empty and a range check on the number fields.
+
+One thing I do notice is 90% of the forms data is simply text fields with a huge amount of variation that can be entered
+into those fields, they're mostly things like names and addresses. The regex for these would be failry simply and straight
+forward. Moslty not allowing negative values to gum up the works. or allowing numbers in states, though this is assuming
+we can only be accessed by countries that are in the US or at least a country that does not use simple numbers are its state
+equivalence. To be frank I'm meerely going for partial points on this assignemnt since i am as mentioned before simply out
+of time. And to some degree a little burnt out I've put probably a full 30 or so hours into programming as a whole in the last
+few days.
