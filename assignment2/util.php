@@ -40,18 +40,18 @@ function accountDetails(){
         <feildset>    
             <legend>My account</legend><br>
                 <label>User Name</label>
-                <input type="text" name="username" value="{$username}" />
+                <input type="text" name="username" value="{$username}" required/>
                 <label>Password</label>
-                <input type="password" name="password" value="{$password}"/><br><br>
+                <input type="password" name="password" value="{$password}" required/><br><br>
                 <label>Address</label>
-                <input type="text" name="stAddress" value="{$stAddress}"/> 
-                <input type="text" name="stAddressTwo" value="{$stAddressTwo}"/> <br>
+                <input type="text" name="stAddress" value="{$stAddress}"required/> 
+                <input type="text" name="stAddressTwo" value="{$stAddressTwo}"required/> <br>
                 <label>City</label>
-                <input type="text" name="city" value="{$city}"/><br>
+                <input type="text" name="city" value="{$city}"required/><br>
                 <label>State</label>
-                <input type="text" name="state" value="{$state}"/><br>
+                <input type="text" name="state" value="{$state}"required/><br>
                 <label>Zip Code</label>
-                <input type="text" name="zipCode" value="{$zipCode}" />
+                <input type="number" name="zipCode" value="{$zipCode}" required/>
                 <br><br>
                 <input type="submit" value="Save Changes"/><br><br>
         </fieldset>
@@ -311,9 +311,9 @@ function signIN(){
     <fieldset><legend>Sign in</legend>
     <form action="index.php" method="POST">
     <label>User Name</labeL>
-    <input type="text" name="username" value="testUser"><br>
+    <input type="text" name="username" value="testUser" required><br>
     <label>Password</labeL>
-    <input type="text" name="password" value="testPassword"><br>
+    <input type="text" name="password" value="testPassword" required><br>
     <input type="submit">
     </form></fieldset>
 __html__;
@@ -325,13 +325,13 @@ function signUP(){
     <fieldset><legend>Sign up</legend>
     <form action="index.php" method="POST">
     <label>User Name</labeL>
-    <input type="text" name="signupUSERNAME" value=""><br>
+    <input type="text" name="signupUSERNAME" value="" placeholder="What would you like your username to be?"required><br>
     <label>Password</labeL>
-    <input type="text" name="signupPASSWORD" value=""><br>
+    <input type="text" name="signupPASSWORD" value="" placeholder="enter a secure password"required><br>
     <label>Full Name</labeL>
-    <input type="text" name="signupFULLNAME" value=""><br>
+    <input type="text" name="signupFULLNAME" value="" placeholder="Bob Smithers"required><br>
     <label>Address</labeL>
-    <input type="text" name="signupADDRESS" value=""><br>
+    <input type="text" name="signupADDRESS" value="" placeholder="123 FunSt Lane new mexico 55104" required><br>
     <input type="submit">
     </form></fieldset>
 __html__;
