@@ -1,16 +1,16 @@
 /* READY */
 * {
-    /* Reset the default padding */
-    padding: 0;
-    margin: 0;
+  /* Reset the default padding */
+  padding: 0;
+  margin: 0;
 }
 
 body {
-    /* Page texture and fonts */
-    background-image: url("stucco.png");
-    font-family: sans-serif;
-    width: 80%;
-    margin: auto;
+  /* Page texture and fonts */
+  background-image: url("stucco.png");
+  font-family: sans-serif;
+  width: 80%;
+  margin: auto;
 }
 
 h1 {
@@ -19,10 +19,10 @@ h1 {
 }
 
 main {
-    background-color: white;
-    padding: 10px;
-    border: 0.2px solid #EBEBEB;
-    margin-bottom: 20px;
+  background-color: white;
+  padding: 10px;
+  border: 0.2px solid #ebebeb;
+  margin-bottom: 20px;
 }
 
 footer {
@@ -35,68 +35,66 @@ footer {
 
 /* Navigation */
 nav {
-    background-color: #F6F6F6;
-    height: auto;
-    margin-top: 10px;
-    margin-bottom: 10px;
-    padding-top: 20px;
-    padding-bottom: 20px;
-    border: 1px solid #ECECEC;
+  background-color: #f6f6f6;
+  height: auto;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  border: 1px solid #ececec;
 }
 nav.user {
-    background-color: black;
-    text-align: right;
-    margin: 0px;
-    border: 0px;
-    padding: 5px;
+  background-color: black;
+  text-align: right;
+  margin: 0px;
+  border: 0px;
+  padding: 5px;
 }
 
 nav li {
-    list-style: none;
-    display: inline;
-    color: grey;
-    padding: 5px;
+  list-style: none;
+  display: inline;
+  color: grey;
+  padding: 5px;
 }
 nav.user li {
-    color: black;
-    padding-top: 10px;
-    padding-bottom: 10px;
-    padding-left: 0px;
-    padding-right: 0px;
-    margin: 0px;
+  color: black;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-left: 0px;
+  padding-right: 0px;
+  margin: 0px;
 }
 
 nav a {
-    text-decoration: none;
-    color: black;
-    padding: 20px;
+  text-decoration: none;
+  color: black;
+  padding: 20px;
 }
 nav.user a {
-    color: grey;
-    padding-top: 5px;
-    padding-bottom: 5px;
-    padding-left: 20px;
-    padding-right: 20px;
+  color: grey;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  padding-left: 20px;
+  padding-right: 20px;
 }
 
 nav ul li a:hover {
-    color: #FFCC00;
-    background-color: rgba(0,0,0,.4);
+  color: #ffcc00;
+  background-color: rgba(0, 0, 0, 0.4);
 }
 nav.user a:hover {
-    color: white;
-    background-color: rgba(255,255,255,.4);
+  color: white;
+  background-color: rgba(255, 255, 255, 0.4);
 }
-
-
 
 /* Artwork Page */
 .artwork {
-    padding: 0px 7px 7px 7px;
-    line-height: 24px;
-    font-family: sans-serif;
-    font-weight: lighter;
-    overflow: auto;
+  padding: 0px 7px 7px 7px;
+  line-height: 24px;
+  font-family: sans-serif;
+  font-weight: lighter;
+  overflow: auto;
 }
 
 .artwork img {
@@ -106,106 +104,107 @@ nav.user a:hover {
 }
 
 .artwork figcaption {
-    padding-bottom: 10px;
+  padding-bottom: 10px;
 }
 
 .artwork .artist {
-    padding-bottom: 10px;
+  padding-bottom: 10px;
 }
 
 .artwork .list_price {
-    padding-top: 10px;
-    padding-bottom: 10px;
-    color: red;
-    font-weight: bold;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  color: red;
+  font-weight: bold;
 }
 
 .artwork .actions {
-    text-align: center;
-    margin: 5px;
-    padding-top: 20px;
-    padding-bottom: 20px;
+  text-align: center;
+  margin: 5px;
+  padding-top: 20px;
+  padding-bottom: 20px;
 }
 .artwork .actions a {
-    font-size: 1.2em;
-    padding-top: 10px;
-    padding-bottom: 10px;
-    padding-left: 20px;
-    padding-right: 20px;
-    font-weight: bold;
-    color: blue;
-    text-decoration: none;
-    background-color: #E8E8E8;
-    border: solid 1px black;
-    border-style: outset;
-    border-radius: 10px;
-    margin-right: 10px;
+  font-size: 1.2em;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-left: 20px;
+  padding-right: 20px;
+  font-weight: bold;
+  color: blue;
+  text-decoration: none;
+  background-color: #e8e8e8;
+  border: solid 1px black;
+  border-style: outset;
+  border-radius: 10px;
+  margin-right: 10px;
 }
 
 .artwork .artwork_info caption {
-    text-align: left;
-    font-weight: bold;
-    border-bottom: 0.5px solid black;
-    padding-bottom: 2px;
+  text-align: left;
+  font-weight: bold;
+  border-bottom: 0.5px solid black;
+  padding-bottom: 2px;
 }
 
 .artwork .artwork_info .facet {
-    font-weight: bold;
-    padding-right: 10px;
-    font-size: 15px;
-    width: 10%;
+  font-weight: bold;
+  padding-right: 10px;
+  font-size: 15px;
+  width: 10%;
 }
 
 /* Related Artwork */
 .related {
-    display: flex;
-    width: 100%;
-    background-color: white;
-    text-align: center;
-    overflow-y: scroll;
+  display: flex;
+  width: 100%;
+  background-color: white;
+  text-align: center;
+  overflow-y: scroll;
 }
 
 .related h2 {
-    border-bottom: 1px solid black;
-    padding-top: 20px;
+  border-bottom: 1px solid black;
+  padding-top: 20px;
 }
 
 .related .relatedArt {
-    margin: 15px;
-    height: 200px;
-    border-color: black;
-    border-width: 1px;
-    border-style: solid;
-    padding-top: 10px;
-    padding-left: 30px;
-    padding-right: 30px;
+  margin: 15px;
+  height: 200px;
+  border-color: black;
+  border-width: 1px;
+  border-style: solid;
+  padding-top: 10px;
+  padding-left: 30px;
+  padding-right: 30px;
 }
 
 .related figure {
-    height: 170px;
+  height: 170px;
 }
 
 .related img {
-    max-width: 150px;
-    max-height: 150px;
+  max-width: 150px;
+  max-height: 150px;
 }
 
 .related p {
-    padding-bottom: 5px;
-    font-style: italic;
+  padding-bottom: 5px;
+  font-style: italic;
 }
 
 .related a {
-    color: black;
-    text-decoration: none;
+  color: black;
+  text-decoration: none;
 }
 .related .actions a {
-    padding: 5px;
-    margin: 5px;
-    font-weight: bold;
-    color: blue;
-    background-color: #E8E8E8;
-    border: solid 1px black;
-    border-style: outset;
-    border-radius: 10px;
+  padding: 5px;
+  margin: 5px;
+  font-weight: bold;
+  color: blue;
+  background-color: #e8e8e8;
+  border: solid 1px black;
+  border-style: outset;
+  border-radius: 10px;
 }
+

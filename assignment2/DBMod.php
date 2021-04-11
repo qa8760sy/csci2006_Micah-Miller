@@ -1,6 +1,6 @@
 <?php
 abstract class DBMod{
-$id="";
+protected $id="";
 
  function __construct($id = null){
      $this->id = $id;
