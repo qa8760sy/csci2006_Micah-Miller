@@ -9,12 +9,19 @@ var_dump($_SESSION);
 echo "<br><br><b>Get data</b><br>";
 var_dump($_GET);
 echo "<br><br>";
+
+// 
+//input validation
+
 if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['username']) && isset($_POST['password'] )) {
     $userId = isValidUser($_POST['username'], $_POST['password']);
-    if($userId != false) {
+    var_dump($userId);
+    if($userId !== false) {
         // $_SESSION['currentUser'] = $_POST['username'];
-        $_SESSION['currentUser'] = intval($userId);
+        $_SESSION['currentUser'] = intval($userId); //casted to int value
     }
+}else{
+    $_SESSION['currentUser'] = 'guest';
 }
 
 if(isset($_GET['logout'])) {
@@ -35,17 +42,33 @@ switch($_GET["pg"]){
         $header = "Sign-up";
         $body = signUP();
         break;
+    case "signUP":
+        if(prepareSIGNUP() == true){
+            $header="Account Page";
+            $body = accountDetails();
+            break;
+        }else{
+            $header = "Sign-up";
+            $body = signUP(); 
+            break; 
+        }
     case "account":
-        $header = "Account Page";
-        $body = accountDetails();
-        break;
+        if($_SESSION['currentUser'] == 'guest'){
+            $header="404";
+            $body = "404- page not found";
+            break;
+        }else{
+            $header = "Account Page";
+            $body = accountDetails();
+            break;
+        }
     case "artist":
         if(isset($_GET["artist"])){
-        $artist = new artist($_GET["artist"]);
-        $body = $artist->toHTML();
+            $artist = new artist($_GET["artist"]);
+            $body = $artist->toHTML();
         }else{
-        $header = "artists";
-        $body = artistss();
+            $header = "artists";
+            $body = artistss();
         }
         break;
     case "aboutUs":
@@ -73,7 +96,11 @@ switch($_GET["pg"]){
         }
         break;
     case "wishlist":
-        if(isset($_POST) && isset($_POST['wish'])) { //fix this shit
+        if($_SESSION['currentUser'] == 'guest'){
+            $header="404";
+            $body = "404- page not found";
+            break;
+        }else if(isset($_POST) && isset($_POST['wish'])) { //fix this shit
             if($_POST['wish'] == "removeWishlist") {                            
                 removeFromWishlist($_POST['artworkId']);
             }else if($_POST['wish'] == "addToCart") {
@@ -98,7 +125,6 @@ switch($_GET["pg"]){
         break;
     case "Logout":
         unset($_SESSION['currentUser']);
-        
         break;
     default:
         $header = printTitle();
