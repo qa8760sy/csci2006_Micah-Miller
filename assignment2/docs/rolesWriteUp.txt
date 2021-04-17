@@ -1,0 +1,11 @@
+Users-
+Currently there are only two types of users.
+The Guest-which has access to the cart, and to view any of the none account specific pages.
+The account user-Someone who access to all forward facing pages and has thier own account page with relevant pages.
+
+I've added code that will produce an error when someone with a guest login tries to access an account page or wishlist page.
+And because database information requires other database information I don't believe theres a guest or for one user to get another users
+private info.
+
+I theorize adding a new roles to shouldn't be terrible difficult. Without creating a new table. I would a new column to the customer 
+database something like "access level". 

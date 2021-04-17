@@ -88,13 +88,7 @@ class artist extends DBMod{
             }
             return false;
         }
-        public function toHTML(){ //pg. 1118    sanders-assignment4-40:59
-            // $theValues = array($this->getartistID(),$this->getfullName(),$this->getLastName(),$this->getInfluence(),$this->getDateOfDeath(),$this->getDescription(),$this->getDateOfBirth(),$this->getOrigin() );
-            // $printOut = "<ul>";
-            // foreach($theValues as $value){
-            //     $printOut .= "<li>". $value . "</li>";
-            // }
-            // $printOut .="</ul>";
+        public function toHTML(){ 
             
             $printout = <<<__html__
             <h2><b>{$this->getfullName()}</b></h2>

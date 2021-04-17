@@ -1,16 +1,21 @@
 <?php 
-// think i need to include my classes?
+
 include_once("artist.php");
 include_once("artwork.php");
 
 function accountDetails(){
-    $stAddress = "123 aStPlace";
-    $username = "UserPrimeUlimateMAXIMUMER!";
-    $password ="PASSWERDD";
-    $stAddressTwo ="";
-    $city = "crazyTown";
-    $state ="funStatE";
-    $zipCode= "55689";
+    $pdo = connectToDb();
+    $sql = "SELECT * FROM Customer WHERE customer_id = :id";
+    $stmt = $pdo->prepare($sql);  
+    $stmt->execute(array(
+      ':id'=> $_SESSION['currentUser']
+    ));
+    $userData = $stmt->fetch();
+
+    $stAddress = $userData['customer_addr'];
+    $username = $userData['customer_username'];
+    $password = "";
+
 
     if(isset($_POST["stAddress"])){
         $stAddress = $_POST["stAddress"];
@@ -21,18 +26,8 @@ function accountDetails(){
     if(isset($_POST["password"])){
         $password = $_POST["password"];
     }
-    if(isset($_POST["city"])){
-        $city = $_POST["city"];
-    }
-    if(isset($_POST["state"])){
-        $state = $_POST["state"];
-    }
-    if(isset($_POST["stAddressTwo"])){
-        $stAddressTwo = $_POST["stAddressTwo"];
-    }
-    if(isset($_POST["zipCode"])){
-        $zipCode = $_POST["zipCode"];
-    }
+
+    // if update perform update, run query then display it, for future***
 
    return
     <<<__html__
@@ -40,18 +35,11 @@ function accountDetails(){
         <feildset>    
             <legend>My account</legend><br>
                 <label>User Name</label>
-                <input type="text" name="username" value="{$username}" required/>
+                <input type="text" name="username" value="{$username}"/>
                 <label>Password</label>
-                <input type="password" name="password" value="{$password}" required/><br><br>
+                <input type="password" name="password" value="{$password}"/><br><br>
                 <label>Address</label>
-                <input type="text" name="stAddress" value="{$stAddress}"required/> 
-                <input type="text" name="stAddressTwo" value="{$stAddressTwo}"required/> <br>
-                <label>City</label>
-                <input type="text" name="city" value="{$city}"required/><br>
-                <label>State</label>
-                <input type="text" name="state" value="{$state}"required/><br>
-                <label>Zip Code</label>
-                <input type="number" name="zipCode" value="{$zipCode}" required/>
+                <textarea name="stAddress">{$stAddress}</textarea>
                 <br><br>
                 <input type="submit" value="Save Changes"/><br><br>
         </fieldset>
@@ -65,7 +53,7 @@ function printTitle(){
 }
 
 function navBars(){
-    if(isLoggedIn()){
+    if(isLoggedIn() && !$_SESSION['currentUser'] == 'guest'){
         $firstNavigation=array(
         array(
             "title" => "my account",
@@ -270,6 +258,7 @@ function isValidUser($username, $password){
     $sql = "SELECT customer_id FROM Customer WHERE customer_username=:username AND customer_passhash=:password";
     $stmt = $pdo->prepare($sql);  
     $hashedPassword = md5($username.'SECRET'.$password);
+    var_dump($hashedPassword);
     $stmt->execute(array(":username" => $username, ":password" => $hashedPassword));   //binds the values as well as executes them    
     if($stmt->rowCount() == 0) {
         return false;
@@ -289,21 +278,24 @@ function userNameInUse($username){
 
 function prepareSIGNUP(){
     $pdo = connectToDb();
-    if(!userNameInUse($username)){
-        $signupusername = $_POST['signupUSERNAME'];
+    $signupUSERNAME = $_POST['signupUSERNAME'];
+    var_dump(userNameInUse($signupUSERNAME));
+    if(!userNameInUse($signupUSERNAME)){
+        
         $password = $_POST['signupPASSWORD'];
         $hashedPassword = md5($signupUSERNAME.'SECRET'.$password); 
         $fullName = $_POST['signupFULLNAME'];
         $address= $_POST['signupADDRESS'];
         $sql = "INSERT INTO Customer (customer_username, customer_passhash, customer_fullName, customer_addr)
-        VALUES ($signupusername, $hashedPassword, $fullName, $address)";
+        VALUES ('$signupUSERNAME', '$hashedPassword', '$fullName', '$address')";
         $stmt = $pdo->prepare($sql);
         $stmt->execute();        
         $_SESSION['currentUser'] = $_POST['signupUSERNAME'];
+    return true;
         // isValidUser($signupusername, $password);
     }else{
         echo "user name already in use";
-    }
+    }return false;
 }
 
 function signIN(){
@@ -323,7 +315,7 @@ __html__;
 function signUP(){
     $html =<<<__html__
     <fieldset><legend>Sign up</legend>
-    <form action="index.php" method="POST">
+    <form action="index.php?pg=signUP" method="POST">
     <label>User Name</labeL>
     <input type="text" name="signupUSERNAME" value="" placeholder="What would you like your username to be?"required><br>
     <label>Password</labeL>
@@ -443,19 +435,26 @@ function buildCart(){
     foreach ($results as $key => $value) {
         $html .=  '<tr><td>'.htmlentities(utf8_encode($value['artwork_name'])).'</td><td>' . addButtons($value['artwork_id'], $value['oi_quantity']) .' </td></tr>';
     }
-    $html .= '</table><br><form><button type="submit" name="action" value="order">Place Order</button> </form>';
+    $html .= '</table><br><form action="?pg=shoppingcart&" method="post"><button type="submit" name="action" value="order">Place Order</button> </form>';
 
     return $html;
 }
 
+
 function placeOrder(){
     $pdo = connectToDb();
     $user = getCurrentUser();
+    $nextOrder = $pdo->query("SELECT COUNT(*) as nextOrderNumber
+    FROM (SELECT COUNT(*) 
+    FROM OrderItem
+    WHERE oi_orderNum > -1
+    GROUP BY oi_orderNum) AS TEMP ");
+    $nextOrderNumber = $nextOrder->fetchAll();
+    var_dump($nextOrderNumber);
     $sql ="UPDATE OrderItem
-    SET oi_orderNum=?, oi_shippingAddr=?
+    SET oi_orderNum={$nextOrderNumber[0]['nextOrderNumber']}, oi_shippingAddr=''
     WHERE oi_orderNum = -1
-    AND oi_customer=$user
-    AND oi_artwork=?";
+    AND oi_customer=$user";
     $stmt = $pdo->prepare($sql);
     $stmt->execute(); 
 }
@@ -495,7 +494,8 @@ function addtoCart($id){
 function getCart(){    
     $pdo = connectToDb();
     $user = getCurrentUser();
-    $sql = "select orderitem.oi_quantity, artwork.* FROM OrderItem LEFT JOIN artwork ON orderitem.oi_artwork = artwork.artwork_id WHERE oi_customer = $user";
+    $sql = "select orderitem.oi_quantity, artwork.* FROM OrderItem LEFT JOIN artwork ON orderitem.oi_artwork = artwork.artwork_id 
+    WHERE oi_orderNum = -1 AND oi_customer = $user";
     $stmt = $pdo->prepare($sql);
     $stmt->execute();
     $results = $stmt->fetchAll();
