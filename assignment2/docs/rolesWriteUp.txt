@@ -3,9 +3,14 @@ Currently there are only two types of users.
 The Guest-which has access to the cart, and to view any of the none account specific pages.
 The account user-Someone who access to all forward facing pages and has thier own account page with relevant pages.
 
-I've added code that will produce an error when someone with a guest login tries to access an account page or wishlist page.
+I've added code that will produce an error when someone with a guest login tries to access an account page or wishlist page. Theres only
+two pages that they shouldn't be able to access so I just threw in a check to see if the currentUser session variable wasn't guest.
 And because database information requires other database information I don't believe theres a guest or for one user to get another users
-private info.
+private info. 
 
 I theorize adding a new roles to shouldn't be terrible difficult. Without creating a new table. I would a new column to the customer 
-database something like "access level". 
+database something like "access level". maybe changing the customer table to "user" table or something of that nature. Right now the site
+only has pages for people to purchase artwork. But it could be expanded to include options for website admins. Changing the nav bar 
+at the top to include pages to manage accounts with actions like: check order status, issue refunds..Uh, other stuff? I think its pretty
+obvious I don't have much an idea what would be practical or not. Somethign I've always felt with computers in general is that they can
+do anything. SO if theres a role that needs to be created the privlages can assigned to a user/admin staff that can do it. 
