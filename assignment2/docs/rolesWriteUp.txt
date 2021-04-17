@@ -14,3 +14,5 @@ only has pages for people to purchase artwork. But it could be expanded to inclu
 at the top to include pages to manage accounts with actions like: check order status, issue refunds..Uh, other stuff? I think its pretty
 obvious I don't have much an idea what would be practical or not. Somethign I've always felt with computers in general is that they can
 do anything. SO if theres a role that needs to be created the privlages can assigned to a user/admin staff that can do it. 
+
+I'm having trouble pushing this to git so this is a "change" hopefully it will register.
