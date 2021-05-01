@@ -30,7 +30,7 @@ class artwork extends DBMod{
         
         protected function insertSQL(){
             $sql = "INSERT INTO Artist (artist_id, artwork_artist, artwork_name, artwork_reprintPrice , artwork_loc , artwork_desc )
-            VALUES ('$this->id','$this->fullName','$this->lastNmae','$this->dateOfDeath','$this->origin','$this->influence', '$this->description')";
+            VALUES ('$this->id','$this->fullName','$this->lastNmae','$this->price','$this->origin','$this->influence', '$this->description')";
             return $sql;
         }
 
@@ -38,7 +38,7 @@ class artwork extends DBMod{
             $sql = "Update Artist Set
             artwork_artist = '$this->fullName',
             artwork_name = '$this->lastNmae',
-            artwork_reprintPrice = '$this->dateOfDeath',
+            artwork_reprintPrice = '$this->price',
             artwork_loc = '$this->influence',
             artwork_desc = '$this->description'
             WHERE artist_id=$this->id";
@@ -121,7 +121,7 @@ class artwork extends DBMod{
                 return $buttons;
             }
         }
-        public function toHTML(){ //pg. 1118, sanders-assignment4-40:59            
+        public function toHTML(){         
             var_dump($this);
             $artist = new artist($this->getartworkArtist());
 
@@ -137,7 +137,32 @@ class artwork extends DBMod{
                     <figure><img src="artwork/medium/{$this->getartworkID()}.png" alt="{$this->getartWorkName()}" title="{$this->getartWorkName()}">
                         <figcaption>
                             <p>{$desc}<p>
-                            <p class="list_price">${$this->getprice()}</p>
+                            <p class="list_price">\${$this->getprice()}</p>
+                            <table> 
+                            <caption>Special Pricing</caption>
+                            <tr>
+                            <th>Member's price</th>
+                            <th>Member Level</th>
+                            <th>Savings value<th>
+                            </tr>
+                            <tr>
+                            <td>\${$this->memberPricing(100)}</td>
+                            <td>The Aesthete</td>
+                            <td>\$100 off</td>
+                            </tr>
+                            </tr>
+                            <tr>
+                            <td>\${$this->memberPricing(300)}</td>
+                            <td>The Ostridge Aesthete</td>
+                            <td>\$200 off</td>
+                            </tr>
+                            </tr>
+                            <tr>
+                            <td>\${$this->memberPricing(500)}</td>
+                            <td>The Royal Ostridge</td>
+                            <td>\$300 off</td>
+                            </tr>
+                            </table>
                             <div class="actions">{$this->buttons()}</div>
                         </figcaption>
                     </figure>
@@ -151,6 +176,9 @@ class artwork extends DBMod{
 __html__;
         }
 
+        function memberPricing($startingValue){
+            return  $this->getprice() - $startingValue;
+        }
         public function setartworkID($artworkID){
             $this->artworkID = $artworkID;
             $this->changedFlag['artworkID'] = true;
@@ -184,8 +212,8 @@ __html__;
         public function getartWorkName(){
             return htmlentities(utf8_encode($this->artWorkName));
         }
-        public function getprice(){
-            return $this->price;
+        public function getprice(){            
+            return $this->price;            
         }
         public function getdescription(){
             return $this->description;

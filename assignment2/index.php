@@ -10,8 +10,11 @@ echo "<br><br><b>Get data</b><br>";
 var_dump($_GET);
 echo "<br><br>";
 
-// 
-//input validation
+// coupon box. use JS to handle it? util->ln-457
+
+
+
+//store account details in session data ,unset hasshed password. Set it to nill
 
 if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['username']) && isset($_POST['password'] )) {
     $userId = isValidUser($_POST['username'], $_POST['password']);
@@ -19,9 +22,9 @@ if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['username']) && isset($_
     if($userId !== false) {
         // $_SESSION['currentUser'] = $_POST['username'];
         $_SESSION['currentUser'] = intval($userId); //casted to int value
-    }
-}else{
+    }else{
     $_SESSION['currentUser'] = 'guest';
+    }
 }
 
 if(isset($_GET['logout'])) {
@@ -127,8 +130,8 @@ switch($_GET["pg"]){
         unset($_SESSION['currentUser']);
         break;
     default:
-        $header = printTitle();
-        $body = printBody();
+        $header = 'home';
+        $body = home();
 }
 
 echo '<!DOCTYPE html>
