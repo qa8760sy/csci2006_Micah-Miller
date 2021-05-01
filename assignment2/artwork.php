@@ -120,7 +120,20 @@ class artwork extends DBMod{
                 __html__;
                 return $buttons;
             }
+        }     
+
+        public function getReviews($id){
+            $sql = "SELECT *
+            FROM reviews WHERE review_artwork = $id";
+            $pdo = connectToDb();
+            $results = $pdo ->query($sql);
+            $html = "";
+            while($row = $results->fetch()){
+              $html .= 'Anonymous User<br>' . $row["review_text"] . '<hr>'; 
+            }
+            return $html;
         }
+
         public function toHTML(){         
             var_dump($this);
             $artist = new artist($this->getartworkArtist());
@@ -166,6 +179,7 @@ class artwork extends DBMod{
                             <div class="actions">{$this->buttons()}</div>
                         </figcaption>
                     </figure>
+                    <div style="height:50px;width:200px;">{$this->getReviews($this->getartworkID())}</div>
                 </article>
                 <h2>Similar Artwork</h2>
                 <article class="related">
@@ -175,6 +189,7 @@ class artwork extends DBMod{
         </html>
 __html__;
         }
+
 
         function memberPricing($startingValue){
             return  $this->getprice() - $startingValue;

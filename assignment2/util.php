@@ -12,16 +12,9 @@ function accountDetails(){
     ));
     $userData = $stmt->fetch();
 
-    $sql = "SELECT * FROM orderitem inner join artwork on artwork_id = oi_artwork where oi_customer= :id";
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute(array(
-        ':id'=> $_SESSION['currentUser']
-      ));
-    $orderInfo = $stmt->fetch();
-    
-    var_dump($orderInfo);
-    
-    
+    $pastOrders = getPastOrders($_SESSION['currentUser']);
+    var_dump($pastOrders);
+    // need for loop(while?) to loop through each $orderInfo['order_id'] to display as groups. IE: order number 1 'insert orders'. order x 'more orders'.
     return
     <<<__html__
     <div><h3>Welcome {$userData['customer_username']}</h3 
@@ -34,10 +27,37 @@ function accountDetails(){
     <br>
     <div>
       <h3>Your Past orders</h3>
-
+        $pastOrders
     </div>
     __html__;
 }
+
+function getPastOrders() {
+    $pdo = connectToDb();
+    $sql = "SELECT * FROM orderitem inner join artwork on artwork_id = oi_artwork where oi_customer= :id order by oi_orderNum";    
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute(array(
+        ':id'=> $_SESSION['currentUser']
+      ));      
+    $orderInfo = $stmt->fetchAll();
+    $html = '<table>';
+    $previousOrderNumber = -1;
+    foreach ($orderInfo as $order) {
+        if($order['oi_orderNum'] == -1) {
+            continue;
+        } else if($previousOrderNumber != $order['oi_orderNum']) {
+            // new order
+            $previousOrderNumber = $order['oi_orderNum'];
+            $html .= "<tr class=\"orderHeader\"><td>{$order['oi_orderNum']}</td></tr>";            
+        } 
+        $html .= "<tr><td>{$order['artwork_name']}</td></tr>";
+    }
+
+    $html .= "</table>";
+    
+    return $html;
+}
+
 // <form method ="POST" action="?pg=account"> after line 50(the div)
 // <feildset>    
 //     <legend>My account</legend><br>

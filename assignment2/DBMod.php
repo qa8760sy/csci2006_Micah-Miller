@@ -24,6 +24,7 @@ function delete(){
  abstract protected function deleteSQL();
  
  abstract function getData($id);
+//  abstract function getReviews($id);
  abstract function toHTML();
  abstract function modifiedInformaiton();
 } 
