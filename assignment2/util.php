@@ -12,40 +12,45 @@ function accountDetails(){
     ));
     $userData = $stmt->fetch();
 
-    $stAddress = $userData['customer_addr'];
-    $username = $userData['customer_username'];
-    $password = "";
-
-
-    if(isset($_POST["stAddress"])){
-        $stAddress = $_POST["stAddress"];
-    }
-    if(isset($_POST["username"])){
-        $username = $_POST["username"];
-    }
-    if(isset($_POST["password"])){
-        $password = $_POST["password"];
-    }
-
-    // if update perform update, run query then display it, for future***
-
-   return
+    $sql = "SELECT * FROM orderitem inner join artwork on artwork_id = oi_artwork where oi_customer= :id";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute(array(
+        ':id'=> $_SESSION['currentUser']
+      ));
+    $orderInfo = $stmt->fetch();
+    
+    var_dump($orderInfo);
+    
+    
+    return
     <<<__html__
-    <form method ="POST" action="?pg=account">
-        <feildset>    
-            <legend>My account</legend><br>
-                <label>User Name</label>
-                <input type="text" name="username" value="{$username}"/>
-                <label>Password</label>
-                <input type="password" name="password" value="{$password}"/><br><br>
-                <label>Address</label>
-                <textarea name="stAddress">{$stAddress}</textarea>
-                <br><br>
-                <input type="submit" value="Save Changes"/><br><br>
-        </fieldset>
-    </form>
+    <div><h3>Welcome {$userData['customer_username']}</h3 
+    <p>This is some of your relevant account details.</p>
+    <p>Your user name: {$userData['customer_username']}</p>
+    <p>Your REAL name: {$userData['customer_fullName']}</p>
+    <p>Your membership status: {$userData['customer_membership']}</p>
+    <p>Your shipping address: {$userData['customer_addr']}</p>
+    </div>
+    <br>
+    <div>
+      <h3>Your Past orders</h3>
+
+    </div>
     __html__;
 }
+// <form method ="POST" action="?pg=account"> after line 50(the div)
+// <feildset>    
+//     <legend>My account</legend><br>
+
+//         <label>User Name</label>
+//         <input type="text" name="username" value="{$username}"/>
+//         <label>Password</label>
+//         <input type="password" name="password" value="{$password}"/><br><br>
+//         <label>Address</label>
+//         <textarea name="stAddress">{$stAddress}</textarea>
+//         <br><br>
+//         <input type="submit" value="Save Changes"/><br><br>
+// </fieldset>
 
 function printTitle(){
     $title = "Lebrun - Self-portrait in a Straw Hat"; //will need to change this to by dynamic i think.
@@ -53,7 +58,7 @@ function printTitle(){
 }
 
 function navBars(){
-    if(isLoggedIn() && !$_SESSION['currentUser'] == 'guest'){
+    if(isLoggedIn() && $_SESSION['currentUser'] != 'guest'){
         $firstNavigation=array(
         array(
             "title" => "my account",
@@ -335,6 +340,9 @@ function isLoggedIn() {
 }
 
 function getCurrentUser() {
+    if (!isLoggedIn()){
+        return -1;
+    }
     return $_SESSION['currentUser'];
 }
 function aboutus(){
@@ -432,14 +440,33 @@ function buildCart(){
     $html = '<h2>Your cart</h2>';
     $html .= '<table>';
     $results = getCart();
+    $cartTotal = 0;
+    if(!isset($_SESSION['coupon'])){
+        $_SESSION['coupon'] ="";
+    }; //need to include this to stop potential abuse
+    $memberPrice = memberPrice();
     foreach ($results as $key => $value) {
-        $html .=  '<tr><td>'.htmlentities(utf8_encode($value['artwork_name'])).'</td><td>' . addButtons($value['artwork_id'], $value['oi_quantity']) .' </td></tr>';
+        $html .=  '<tr><td>'.htmlentities(utf8_encode($value['artwork_name'])).'</td><td>' .
+         addButtons($value['artwork_id'], $value['oi_quantity']) .' </td><td>$' .$value['artwork_reprintPrice'] .
+          '*each' . '</td></tr>';
+        $cartTotal += ( ($value['artwork_reprintPrice'] - $memberPrice ) * $value['oi_quantity'] );
     }
-    $html .= '</table><br><form action="?pg=shoppingcart&" method="post"><button type="submit" name="action" value="order">Place Order</button> </form>';
+    if(isset($_POST['couponField'])){
+        $_SESSION['coupon'] = $_POST['couponField'];
+    }
+    $cartTotal = checkForCoupon($_SESSION['coupon'], $cartTotal);
+    
+    $html .= '</table><br><p>Total: $'. $cartTotal .' .*your member price is included here in the total .</p><br>
+    <form action="" method="Post">
+    Coupon?
+    <input type="text" name="couponField" value="'. $_SESSION['coupon']. '">
+    <button type="submit" name="coupon">check code</button>
+    <br><br>
+
+    <form action="?pg=shoppingcart&" method="post"><button type="submit" name="action" value="order">Place Order</button></form>';
 
     return $html;
 }
-
 
 function placeOrder(){
     $pdo = connectToDb();
@@ -479,7 +506,7 @@ function removeFromCart($artworkId){
     AND oi_customer=$user
     AND oi_artwork=$artworkId";
     $stmt = $pdo->prepare($sql);
-    $stmt->execute();    
+    $stmt->execute();
 }
 
 function addtoCart($id){
@@ -502,4 +529,52 @@ function getCart(){
     return $results;
 }
 
+function memberPrice(){
+    $pdo = connectToDb();
+    $user = getCurrentUser();
+    $sql = "SELECT customer_membership FROM `customer` WHERE customer_id = $user";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute();
+    $result = $stmt->fetch();
+    $amountOff = 0;
+
+    if ($result['customer_membership'] == 'aesthete'){
+        $amountOff =100 ;
+    }else if($result['customer_membership'] == 'ostridgeaesthete'){
+        $amountOff =200 ;
+    }else if($result['customer_membership'] == 'royalostridge'){
+        $amountOff =300 ;
+    }else{
+        $amountOff = 0;
+    }
+return $amountOff;
+}
+
+function manageablePrice($value){
+    return $value / 100;
+}
+
+function updateCartPrice($unmodifiedTotal){
+
+
+}
+
+function checkForCoupon($code, $startingValue){ //yea, these should probably be checking against a database value
+    if ($code === "artizGRT"){
+        $newValue = $startingValue * .95;
+        return $newValue;
+    }else if($code === "coupin"){
+        $newValue = $startingValue * .80;
+        return $newValue;
+    }else if($code === "woohoo"){
+        $newValue = $startingValue * .70;
+        return $newValue;
+    }else if($code === "baron"){
+        $newValue = $startingValue * .15;
+        return $newValue;
+    }else{
+        $newValue = $startingValue;
+        return $newValue;
+    }
+}
 ?>
