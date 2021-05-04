@@ -34,7 +34,8 @@ function accountDetails(){
 
 function getPastOrders() {
     $pdo = connectToDb();
-    $sql = "SELECT * FROM orderitem inner join artwork on artwork_id = oi_artwork where oi_customer= :id order by oi_orderNum";    
+    $sql = "SELECT * FROM orderitem inner join artwork 
+    on artwork_id = oi_artwork where oi_customer= :id order by oi_orderNum";    
     $stmt = $pdo->prepare($sql);
     $stmt->execute(array(
         ':id'=> $_SESSION['currentUser']
@@ -42,35 +43,21 @@ function getPastOrders() {
     $orderInfo = $stmt->fetchAll();
     $html = '<table>';
     $previousOrderNumber = -1;
+    var_dump($orderInfo);
     foreach ($orderInfo as $order) {
         if($order['oi_orderNum'] == -1) {
             continue;
         } else if($previousOrderNumber != $order['oi_orderNum']) {
-            // new order
             $previousOrderNumber = $order['oi_orderNum'];
             $html .= "<tr class=\"orderHeader\"><td>{$order['oi_orderNum']}</td></tr>";            
         } 
-        $html .= "<tr><td>{$order['artwork_name']}</td></tr>";
+        $html .= "<tr><td>{$order['artwork_name']}</td><td>
+            <a href=\"?pg=review&artworkID={$order['oi_artwork']}\">Review product</a></td></tr>"; //here
     }
 
     $html .= "</table>";
-    
     return $html;
 }
-
-// <form method ="POST" action="?pg=account"> after line 50(the div)
-// <feildset>    
-//     <legend>My account</legend><br>
-
-//         <label>User Name</label>
-//         <input type="text" name="username" value="{$username}"/>
-//         <label>Password</label>
-//         <input type="password" name="password" value="{$password}"/><br><br>
-//         <label>Address</label>
-//         <textarea name="stAddress">{$stAddress}</textarea>
-//         <br><br>
-//         <input type="submit" value="Save Changes"/><br><br>
-// </fieldset>
 
 function printTitle(){
     $title = "Lebrun - Self-portrait in a Straw Hat"; //will need to change this to by dynamic i think.
@@ -267,7 +254,6 @@ function connectToDb(){
         return $pdo;
     }
     include ("config.php");
-    // var_dump($connectionString);
    try{
     $pdo = new PDO($connectionString, $dbUserName, $dbPassword);
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -399,7 +385,8 @@ function buildWishlist(){
     $html .= '<table>';
     $results = getWishlist();
     foreach ($results as $key => $value) {
-        $html .=  '<tr><td>'.htmlentities(utf8_encode($value['artwork_name'])).'</td>'. '<td></td><td>' . addWishListButtons($value['artwork_id']) .' </td></tr>';
+        $html .=  '<tr><td>'.htmlentities(utf8_encode($value['artwork_name'])).'</td>'. '<td></td><td>'
+         . addWishListButtons($value['artwork_id']) .' </td></tr>';
     }
     $html .= '</table>';
     var_dump($results);
@@ -476,13 +463,13 @@ function buildCart(){
     }
     $cartTotal = checkForCoupon($_SESSION['coupon'], $cartTotal);
     
-    $html .= '</table><br><p>Total: $'. $cartTotal .' .*your member price is included here in the total .</p><br>
+    $html .= '</table><br><p>Total: $'. $cartTotal .
+    ' .*your member price is included here in the total .</p><br>
     <form action="" method="Post">
     Coupon?
     <input type="text" name="couponField" value="'. $_SESSION['coupon']. '">
     <button type="submit" name="coupon">check code</button>
     <br><br>
-
     <form action="?pg=shoppingcart&" method="post"><button type="submit" name="action" value="order">Place Order</button></form>';
 
     return $html;
@@ -574,11 +561,6 @@ function manageablePrice($value){
     return $value / 100;
 }
 
-function updateCartPrice($unmodifiedTotal){
-
-
-}
-
 function checkForCoupon($code, $startingValue){ //yea, these should probably be checking against a database value
     if ($code === "artizGRT"){
         $newValue = $startingValue * .95;
@@ -597,4 +579,22 @@ function checkForCoupon($code, $startingValue){ //yea, these should probably be 
         return $newValue;
     }
 }
+
+
+function reviewPage($id){
+    $artwork = new artwork($id);
+
+    $html =<<<__html__
+            <main>
+                <article class="artwork">
+                    <h2 class="art_title">{$this->getartWorkName()}</h2>
+                    <p class="artist">By <a href="#">{$artist->getfullName()}</a></p>
+                    <figure><img src="artwork/medium/{$this->getartworkID()}.png" 
+                    alt="{$this->getartWorkName()}" title="{$this->getartWorkName()}">";
+                    </article></main>
+
+    __html__;
+    return $html;
+}
+
 ?>

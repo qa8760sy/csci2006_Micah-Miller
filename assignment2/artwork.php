@@ -147,7 +147,8 @@ class artwork extends DBMod{
                 <article class="artwork">
                     <h2 class="art_title">{$this->getartWorkName()}</h2>
                     <p class="artist">By <a href="#">{$artist->getfullName()}</a></p>
-                    <figure><img src="artwork/medium/{$this->getartworkID()}.png" alt="{$this->getartWorkName()}" title="{$this->getartWorkName()}">
+                    <figure><img src="artwork/medium/{$this->getartworkID()}.png" 
+                    alt="{$this->getartWorkName()}" title="{$this->getartWorkName()}">
                         <figcaption>
                             <p>{$desc}<p>
                             <p class="list_price">\${$this->getprice()}</p>
@@ -177,9 +178,12 @@ class artwork extends DBMod{
                             </tr>
                             </table>
                             <div class="actions">{$this->buttons()}</div>
+                            <article><br> <div style="height:20px;width:400px;float:left;">
+                            <h4>What others have said</h4>
+                            {$this->getReviews($this->getartworkID())}</div></article>
                         </figcaption>
                     </figure>
-                    <div style="height:50px;width:200px;">{$this->getReviews($this->getartworkID())}</div>
+                    
                 </article>
                 <h2>Similar Artwork</h2>
                 <article class="related">
