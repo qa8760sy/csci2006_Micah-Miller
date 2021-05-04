@@ -10,11 +10,8 @@ echo "<br><br><b>Get data</b><br>";
 var_dump($_GET);
 echo "<br><br>";
 
-// coupon box. use JS to handle it? util->ln-457
+//ln-55 util.php
 
-
-
-//store account details in session data ,unset hasshed password. Set it to nill
 
 if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['username']) && isset($_POST['password'] )) {
     $userId = isValidUser($_POST['username'], $_POST['password']);
@@ -125,6 +122,15 @@ switch($_GET["pg"]){
         }
         $header="Shopping cart";
         $body = buildCart();
+        break;
+    case "review":
+        $header="Reviewing an item";
+        if(isset($_GET['artworkID'])){
+          $body = reviewPage($_GET['artworkID']);  
+        }else{
+            $header = 'error returning to main page';
+            $body = home();
+        }
         break;
     case "Logout":
         unset($_SESSION['currentUser']);
