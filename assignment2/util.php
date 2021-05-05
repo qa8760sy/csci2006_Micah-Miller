@@ -580,21 +580,36 @@ function checkForCoupon($code, $startingValue){ //yea, these should probably be 
     }
 }
 
-
 function reviewPage($id){
     $artwork = new artwork($id);
+    $data ="";
+    if(isset($_POST['reviewText'])){
+        $reviewText = $_POST['reviewText'];
+        submitReview($id, $_SESSION['currentUser'], $reviewText);
+        $data= $reviewText;
+    }
 
-    $html =<<<__html__
-            <main>
-                <article class="artwork">
-                    <h2 class="art_title">{$this->getartWorkName()}</h2>
-                    <p class="artist">By <a href="#">{$artist->getfullName()}</a></p>
-                    <figure><img src="artwork/medium/{$this->getartworkID()}.png" 
-                    alt="{$this->getartWorkName()}" title="{$this->getartWorkName()}">";
-                    </article></main>
-
-    __html__;
+    $html ='<h2>Reviewing Product for</h2><h3 class="art_title">' . $artwork->getartWorkName(). '</h3>
+    <figure><img style=""src="artwork/small/'. $artwork->getartworkID() . '.png" 
+                    alt="'. $artwork->getartWorkName().'" title="'. $artwork->getartWorkName().'"></figure>
+                    <div style=""><form action="" method="POST" ><label>What are you thoughts on the above piece?</label><br>'
+                    . textArea($data).'<br>
+                    <input type="submit" value="Share Thoughts"></form></div><br>';
     return $html;
 }
 
+function submitReview($artID, $userID, $text){
+    $pdo = connectToDb();
+    $user = getCurrentUser();
+    $sql ="REPLACE INTO `reviews` (`review_customer`, `review_artwork`, `review_text`)
+     VALUES ($userID, $artID, '$text');";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute(); 
+}
+
+function textArea($data){
+    $html ='
+    <textarea name="reviewText" rows="4" cols="50">' . htmlentities($data). '</textarea>';
+    return $html;
+}
 ?>
